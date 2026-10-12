@@ -53,7 +53,7 @@ Regex candidates + validation: AHV/AVS (EAN-13 check digit), IBAN (ISO 13616 mod
 PRD ref: `prd.md > Redaction`.
 
 ### Apertus Client (`llm.py`)
-Chunks text (~1,200 characters on sentence boundaries), calls `/v1/chat/completions` with a system prompt + few-shot examples and `response_format: json_schema` (types PERSON, ORG, ADDRESS, LOCATION, QUASI, HEALTH, OTHER + reason). Locates each returned span verbatim in the chunk (all occurrences); discards spans not found in the text (hallucination guard). Timeouts → returns `[]` and flags `llm_ok=false`.
+Chunks text (~500 characters on sentence boundaries) and runs two focused passes per chunk — identity (PERSON, ORG, ADDRESS, ID) and context (HEALTH, QUASI) — each with a system prompt, multilingual few-shot examples and `response_format: json_schema` (`minItems: 1` with a `NONE` sentinel). Locates each returned span verbatim in the chunk (all occurrences); discards spans not found in the text (hallucination guard). Timeouts → returns `[]` and flags `llm_ok=false`.
 PRD ref: `prd.md > Redaction`, `prd.md > States and Boundaries`.
 
 ### Pipeline (`pipeline.py`)

@@ -149,6 +149,16 @@ async function redact() {
   }
 }
 
+async function checkHealth() {
+  try {
+    const h = await (await fetch("/api/health")).json();
+    $("status").textContent = h.llm_ok ? `Apertus: ready (${h.model})` : "Apertus: offline — rules only";
+    $("status").className = "pill " + (h.llm_ok ? "ok" : "down");
+  } catch { $("status").textContent = "Apertus: unknown"; }
+}
+checkHealth();
+setInterval(checkHealth, 15000);
+
 $("input").addEventListener("input", () => { $("redact").disabled = !$("input").value.trim(); });
 $("redact").addEventListener("click", redact);
 $("copy").addEventListener("click", () => navigator.clipboard.writeText($("redacted").textContent));

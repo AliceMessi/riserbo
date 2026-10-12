@@ -43,7 +43,7 @@ def test_finds_swiss_identifiers_in_text():
             "Firma CHE-116.281.710 MWST, Tel. +41 91 751 23 45, max@example.ch.")
     found = types(text)
     kinds = [k for k, _ in found]
-    assert kinds == ["AHV", "IBAN", "UID", "PHONE", "EMAIL"]
+    assert kinds == ["PERSON", "AHV", "IBAN", "UID", "PHONE", "EMAIL"]
 
 
 def test_invoice_numbers_are_not_redacted():
@@ -67,3 +67,16 @@ def test_same_value_gets_same_placeholder():
     redacted, mapping, _ = redact(text, find_all(text))
     assert redacted == "Mail [EMAIL_1] e poi di nuovo [EMAIL_1], AHV [AHV_1]."
     assert mapping == {"[EMAIL_1]": "a@b.ch", "[AHV_1]": "756.9217.0769.85"}
+
+
+def test_addresses():
+    assert types("abita in Via Cantonale 21, 6685 Bosco Gurin.") == [("ADDRESS", "Via Cantonale 21, 6685 Bosco Gurin")]
+    assert types("Er wohnt an der Hauptstrasse 7, 7482 Bergün.") == [("ADDRESS", "Hauptstrasse 7, 7482 Bergün")]
+    assert types("l'appartement de la Rue du Bourg 3, 1663 Gruyères") == [("ADDRESS", "Rue du Bourg 3, 1663 Gruyères")]
+    assert types("ai sensi dell'art. 336c CO") == []
+
+
+def test_names_after_titles():
+    assert types("Gentile avvocata Rezzonico,") == [("PERSON", "Rezzonico")]
+    assert types("Sehr geehrte Frau Dr. Keller,") == [("PERSON", "Keller")]
+    assert types("Mme Sophie Rochat conteste") == [("PERSON", "Sophie Rochat")]

@@ -10,7 +10,7 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
 
 ## Slices
 
-- [ ] **1. Paste a document and get exact identifiers redacted with placeholders**
+- [x] **1. Paste a document and get exact identifiers redacted with placeholders**
   Becomes usable: `http://localhost:8080` shows the Document panel; Redact highlights AHV, IBAN, UID, codice fiscale, partita IVA, cards, e-mails and phones (checksum-validated) and shows redacted text + mapping.
   Why now: Bootstraps the app end to end (scaffold, API, page) on the deterministic half of the kernel, so the Apertus half lands on a working path.
   PRD ref: `prd.md > The Core Journey` (steps 1-4), `prd.md > Redaction`, `prd.md > Placeholders and Mapping`
@@ -20,7 +20,7 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
   Learner check: Paste a text with an AHV number and an IBAN, press Redact, and see both highlighted and replaced.
   Commit: `Add rule-based redaction with placeholders and web page`
 
-- [ ] **2. Apertus finds names, organisations and indirect identifiers**
+- [x] **2. Apertus finds names, organisations and indirect identifiers**
   Becomes usable: Redact also highlights people, organisations, addresses and QUASI identifiers with reasons; status pill shows Apertus state; rules-only fallback banner when the model is down.
   Why now: This is the unique kernel — it must be proven before polish.
   PRD ref: `prd.md > Redaction`, `prd.md > States and Boundaries`
@@ -84,3 +84,6 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
 - [ ] Learning wrap-up + `devpost/app-map.html`.
 
 ## Revisions
+- Slice 2: a single extraction prompt was unstable on Apertus 1.5 8B Q4 (same chunk sometimes returned an empty list; the model "wants" to reason before answering). Changed to two focused passes per chunk (identity: PERSON/ORG/ADDRESS/ID; context: HEALTH/QUASI), smaller chunks (~500 chars), and a schema with `minItems: 1` plus a `NONE` sentinel so the model cannot close the list prematurely. Result: identical output on repeated runs. Updates `spec.md > Apertus Client (llm.py)`.
+- Slice 2: added deterministic ADDRESS (street + number + postcode) and title-plus-surname PERSON rules after live runs showed Apertus skipping greetings and some addresses; surname propagation hides later mentions ("dott. Bernasconi"). Merge now ranks checksum rules first, then longest span.
+

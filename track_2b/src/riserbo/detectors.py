@@ -119,10 +119,25 @@ PHONE_RE = re.compile(
 )
 IPV4_RE = re.compile(r"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b")
 DOB_RE = re.compile(
-    r"(?:nat[oa]\s+(?:a\s+[\w' ]{2,30}\s+)?il|data\s+di\s+nascita[:\s]*|geboren\s+(?:in\s+[\w ]{2,30}\s+)?am|"
+    r"(?:nat[oa]\s+(?:a\s+[\w' ]{2,30}\s+)?il|data\s+di\s+nascita[:\s]*|geboren\s+(?:in\s+[\w ]{2,30}\s+)?am|geb\.\s*am|"
     r"geburtsdatum[:\s]*|n[ée]e?\s+(?:à\s+[\w' ]{2,30}\s+)?le|date\s+de\s+naissance[:\s]*|born\s+(?:on\s+)?|date\s+of\s+birth[:\s]*)\s*"
     r"(\d{1,2}[./\-]\d{1,2}[./\-]\d{2,4}|\d{1,2}\.?\s+[A-Za-zÀ-ÿ]{3,10}\s+\d{4})",
     re.I,
+)
+
+
+_STREET_IT = r"(?:Via|Viale|Piazza|Piazzetta|Vicolo|Strada|Contrada|Corso|Largo|Salita|Riva|Lungolago)"
+_STREET_FR = r"(?:Rue|Avenue|Av\.|Chemin|Ch\.|Route|Rte|Place|Boulevard|Bd|Quai|Impasse|Allée|Sentier)"
+_NAME = r"[A-ZÀ-Ý][\w'’À-ÿ\-]*(?:\s+(?:d[ei]l?|della|dei|du|de|des|la|le|von|am|im)?\s*[A-ZÀ-Ý][\w'’À-ÿ\-]*){0,3}"
+_POSTCODE_TOWN = r"(?:,?\s+(?:CH-|I-)?\d{4,5}\s+[A-ZÀ-Ý][\w'’À-ÿ\-]*(?:\s+[A-ZÀ-Ý][\w'’À-ÿ\-]*){0,2})?"
+ADDRESS_RE = re.compile(
+    rf"\b(?:{_STREET_IT}|{_STREET_FR})\s+(?:d[eu]l?l?[a']?\s*|de\s+la\s+|des\s+|du\s+)?{_NAME}\s+\d{{1,4}}[a-zA-Z]?{_POSTCODE_TOWN}"
+    rf"|\b[A-ZÄÖÜ][a-zäöüß]+(?:strasse|gasse|weg|platz|allee|ring|rain|matte)\s+\d{{1,4}}[a-zA-Z]?{_POSTCODE_TOWN}"
+)
+_HONORIFIC = (r"(?:Sig\.(?:ra|na)?|Signor[a]?|sig\.(?:ra)?|dott\.(?:ssa)?|Dott\.(?:ssa)?|avv\.|Avv\.|avvocat[oa]|ing\.|Ing\.|"
+              r"Herr|Herrn|Frau|Monsieur|Madame|Mme|M\.|Me|Maître|Mr\.?|Mrs\.?|Ms\.?)")
+HONORIFIC_RE = re.compile(
+    rf"\b{_HONORIFIC}\s+(?:(?:Dr|Prof|med|iur|lic)\.\s*)*([A-ZÀ-Ý][a-zà-ÿ'’]+(?:[\-\s][A-ZÀ-Ý][a-zà-ÿ'’]+){{0,2}})"
 )
 
 
@@ -167,12 +182,17 @@ def find_all(text: str) -> list[Span]:
         add(m.start(), m.end(), "IP", "IPv4 address")
     for m in DOB_RE.finditer(text):
         add(m.start(1), m.end(1), "DOB", "Date of birth")
+    for m in ADDRESS_RE.finditer(text):
+        add(m.start(), m.end(), "ADDRESS", "Postal address (street and number)")
+    for m in HONORIFIC_RE.finditer(text):
+        add(m.start(1), m.end(1), "PERSON", "Name after a title or form of address")
 
     return resolve_overlaps(spans)
 
 
 # Identifier types with a checksum are more trustworthy than generic ones.
-_PRIORITY = {"AHV": 0, "IBAN": 0, "UID": 0, "CF": 0, "CARD": 1, "PIVA": 1, "EMAIL": 2, "DOB": 2, "IP": 3, "PHONE": 4}
+_PRIORITY = {"AHV": 0, "IBAN": 0, "UID": 0, "CF": 0, "CARD": 1, "PIVA": 1, "EMAIL": 2, "DOB": 2, "IP": 3, "PHONE": 4,
+             "ADDRESS": 5, "PERSON": 6}
 
 
 def resolve_overlaps(spans: list[Span]) -> list[Span]:

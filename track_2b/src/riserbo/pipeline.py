@@ -25,10 +25,17 @@ def normalise(kind: str, value: str) -> str:
     return re.sub(r"\s+", " ", v).strip(" .,;:")
 
 
+EXACT_TYPES = ID_TYPES | {"EMAIL", "DOB"}
+
+
 def merge(rule_spans: list[Span], model_spans: list[Span]) -> list[Span]:
-    """Rule spans win over model spans; among model spans the longer one wins."""
-    kept: list[Span] = list(rule_spans)
-    for s in sorted(model_spans, key=lambda s: -(s.end - s.start)):
+    """Checksum/format rules always win; otherwise the longer span wins."""
+    def rank(s: Span) -> tuple:
+        exact = s.source == "rule" and s.type in EXACT_TYPES
+        return (0 if exact else 1, -(s.end - s.start), s.start)
+
+    kept: list[Span] = []
+    for s in sorted([*rule_spans, *model_spans], key=rank):
         if all(s.end <= k.start or s.start >= k.end for k in kept):
             kept.append(s)
     return sorted(kept, key=lambda s: s.start)
