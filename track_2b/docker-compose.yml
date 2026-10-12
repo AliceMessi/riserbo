@@ -1,0 +1,29 @@
+# Riserbo: the Apertus model server sits on an internal network with no route to
+# the internet; only the app is published on localhost.
+services:
+  llm:
+    # llama.cpp server, pinned by digest (build 11561, supports the apertus architecture)
+    image: ghcr.io/ggml-org/llama.cpp:server@sha256:052888c603894ecfa08deb6714fdc2d7084e491e174d5ab41bfb36b49ee7151c
+    command: ["-m", "/models/apertus-v1.5-8b-text-q4_k_m.gguf", "--host", "0.0.0.0", "--port", "8080",
+              "-c", "8192", "--parallel", "2", "--jinja", "--alias", "apertus-v1.5-8b-text"]
+    volumes:
+      - ./models:/models:ro
+    networks: [offline]
+    restart: unless-stopped
+
+  app:
+    build: .
+    environment:
+      LLM_NAME: ${LLM_NAME:-apertus-v1.5-8b-text}
+      LLM_BASE_URL: ${LLM_BASE_URL:-http://llm:8080/v1}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+    ports:
+      - "${RISERBO_PORT:-8080}:8000"
+    depends_on: [llm]
+    networks: [offline, web]
+    restart: unless-stopped
+
+networks:
+  offline:
+    internal: true
+  web: {}

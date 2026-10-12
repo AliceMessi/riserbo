@@ -25,3 +25,6 @@ build/
 .DS_Store
 .idea/
 .vscode/
+models/
+data/eval/results.*.json
+.venv-eval/
