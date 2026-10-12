@@ -1,0 +1,122 @@
+{
+  "dataset": "data/eval/riserbo_eval_v1.jsonl",
+  "documents": 60,
+  "model": "apertus-v1.5-8b-text",
+  "endpoint": "http://localhost:1234/v1",
+  "llm_failed_documents": 0,
+  "setups": {
+    "rules": {
+      "leak_rate": 0.5818,
+      "entity_recall": 0.4175,
+      "precision": 1.0,
+      "recall_by_type": {
+        "ADDRESS": 0.933,
+        "CONTACT": 1.0,
+        "DATE": 1.0,
+        "HEALTH": 0.0,
+        "ID": 1.0,
+        "ORG": 0.0,
+        "PERSON": 0.1,
+        "QUASI": 0.0
+      },
+      "gold_items": 594,
+      "redactions": 248,
+      "seconds_per_doc": 0.0
+    },
+    "apertus": {
+      "leak_rate": 0.2544,
+      "entity_recall": 0.7273,
+      "precision": 0.939,
+      "recall_by_type": {
+        "ADDRESS": 0.967,
+        "CONTACT": 0.167,
+        "DATE": 0.0,
+        "HEALTH": 0.817,
+        "ID": 0.849,
+        "ORG": 0.833,
+        "PERSON": 0.85,
+        "QUASI": 0.567
+      },
+      "gold_items": 594,
+      "redactions": 705,
+      "seconds_per_doc": 12.88
+    },
+    "rules+apertus": {
+      "leak_rate": 0.132,
+      "entity_recall": 0.8906,
+      "precision": 0.9269,
+      "recall_by_type": {
+        "ADDRESS": 1.0,
+        "CONTACT": 1.0,
+        "DATE": 1.0,
+        "HEALTH": 0.817,
+        "ID": 1.0,
+        "ORG": 0.833,
+        "PERSON": 0.9,
+        "QUASI": 0.567
+      },
+      "gold_items": 594,
+      "redactions": 588,
+      "seconds_per_doc": 12.88
+    },
+    "rizzo-pii-0.3B": {
+      "leak_rate": 0.2913,
+      "entity_recall": 0.7424,
+      "precision": 0.8447,
+      "recall_by_type": {
+        "ADDRESS": 1.0,
+        "CONTACT": 1.0,
+        "DATE": 1.0,
+        "HEALTH": 0.017,
+        "ID": 0.796,
+        "ORG": 0.783,
+        "PERSON": 0.989,
+        "QUASI": 0.0
+      },
+      "gold_items": 594,
+      "redactions": 850,
+      "seconds_per_doc": 0.19
+    },
+    "rules+rizzo": {
+      "leak_rate": 0.2603,
+      "entity_recall": 0.7744,
+      "precision": 0.8033,
+      "recall_by_type": {
+        "ADDRESS": 1.0,
+        "CONTACT": 1.0,
+        "DATE": 1.0,
+        "HEALTH": 0.017,
+        "ID": 1.0,
+        "ORG": 0.783,
+        "PERSON": 0.989,
+        "QUASI": 0.0
+      },
+      "gold_items": 594,
+      "redactions": 671,
+      "seconds_per_doc": 0.19
+    }
+  },
+  "leak_rate_by_language": {
+    "it": {
+      "rules": 0.6283,
+      "apertus": 0.2033,
+      "rules+apertus": 0.1353,
+      "rizzo-pii-0.3B": 0.2943,
+      "rules+rizzo": 0.2476
+    },
+    "de": {
+      "rules": 0.5616,
+      "apertus": 0.3161,
+      "rules+apertus": 0.1661,
+      "rizzo-pii-0.3B": 0.3189,
+      "rules+rizzo": 0.2816
+    },
+    "fr": {
+      "rules": 0.554,
+      "apertus": 0.2486,
+      "rules+apertus": 0.0971,
+      "rizzo-pii-0.3B": 0.2627,
+      "rules+rizzo": 0.2535
+    }
+  }
+}
