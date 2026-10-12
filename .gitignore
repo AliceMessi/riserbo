@@ -1,0 +1,35 @@
+/devpost/learner-profile.md
+.env
+.env.*
+!.env.example
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# Model weights and checkpoints — do not commit these
+*.bin
+*.safetensors
+*.gguf
+*.ckpt
+*.pt
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+build/
+
+# OS and editor
+.DS_Store
+.idea/
+.vscode/
+
+# Duplicate skill-pack installs for other harnesses
+/.claude/
+/agent/
