@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riserbo</title>
+<style>
+  :root {
+    --ink: #111; --muted: #5f6368; --line: #e3e3e3; --bg: #fff; --soft: #f7f7f5;
+    --red: #d52b1e; --ok: #1e7d32;
+    --PERSON: #fde2c8; --ORG: #dfe7fb; --ADDRESS: #e6dcf7; --QUASI: #fbd3d3;
+    --HEALTH: #fbe0ef; --ID: #fff1b8; --CONTACT: #d7f0e3; --FINANCIAL: #e3f0c8; --DATE: #e8e8e8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+           padding: 18px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: baseline; gap: 12px; }
+  .brand b { font-size: 20px; letter-spacing: .02em; }
+  .brand b::before { content: ""; display: inline-block; width: 12px; height: 12px; background: var(--red);
+                     margin-right: 9px; vertical-align: 1px; }
+  .brand span { color: var(--muted); font-size: 13px; }
+  .pill { font-size: 12px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .pill.ok { color: var(--ok); border-color: #b9dcbf; }
+  .pill.down { color: var(--red); border-color: #efb7b2; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px clamp(16px, 4vw, 48px) 64px; }
+  section { border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; }
+  textarea { width: 100%; min-height: 170px; padding: 12px; border: 1px solid var(--line); border-radius: 6px;
+             font: 14px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; resize: vertical; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+  button { font: inherit; font-size: 14px; padding: 8px 16px; border-radius: 6px; border: 1px solid var(--line);
+           background: #fff; cursor: pointer; }
+  button.primary { background: var(--red); border-color: var(--red); color: #fff; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .banner { background: #fff4f2; border: 1px solid #efb7b2; color: #8a1c13; padding: 8px 12px; border-radius: 6px;
+            font-size: 13px; margin-bottom: 12px; }
+  .doc { white-space: pre-wrap; background: var(--soft); border-radius: 6px; padding: 14px; line-height: 1.8; }
+  mark { border-radius: 3px; padding: 1px 3px; color: inherit; cursor: help; }
+  mark small { font: 600 10px/1 ui-monospace, Consolas, monospace; color: #555; margin-left: 4px; }
+  mark.apertus { box-shadow: inset 0 -2px 0 rgba(0,0,0,.35); }
+  .redacted { white-space: pre-wrap; font: 14px/1.6 ui-monospace, "Cascadia Mono", Consolas, monospace;
+              background: var(--soft); padding: 14px; border-radius: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  td, th { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; }
+  td code { font: 12px ui-monospace, Consolas, monospace; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .legend span { font-size: 11px; padding: 2px 8px; border-radius: 3px; }
+  .stats { display: flex; gap: 24px; flex-wrap: wrap; margin: 4px 0 14px; }
+  .stats div b { display: block; font-size: 22px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>Riserbo</b><span>Reversible redaction for Swiss &amp; Italian documents · runs on your machine</span></div>
+  <span id="status" class="pill">Apertus: checking…</span>
+</header>
+<main>
+  <section>
+    <h2>1 · Document</h2>
+    <textarea id="input" placeholder="Paste a document in Italian, German or French…"></textarea>
+    <div class="row">
+      <button id="redact" class="primary" disabled>Redact</button>
+      <span class="muted" id="samples"></span>
+      <span class="muted" id="busy" hidden>Working…</span>
+    </div>
+  </section>
+
+  <section id="out" hidden>
+    <h2>2 · Redacted</h2>
+    <div id="llmBanner" class="banner" hidden>Apertus is not reachable — only rule-based detection ran. Names and indirect identifiers may remain.</div>
+    <div class="stats">
+      <div><b id="nFound">0</b><span class="muted">items redacted</span></div>
+      <div><b id="nMissed">0</b><span class="muted">rules alone would have leaked</span></div>
+      <div><b id="nSecs">–</b><span class="muted">seconds</span></div>
+    </div>
+    <div id="highlighted" class="doc"></div>
+    <div class="legend" id="legend"></div>
+    <div class="grid">
+      <div>
+        <div class="row" style="margin-top:0;justify-content:space-between">
+          <strong>Text to share</strong><button id="copy">Copy</button>
+        </div>
+        <div id="redacted" class="redacted"></div>
+      </div>
+      <div>
+        <strong>Mapping</strong> <span class="muted">(kept in this page only)</span>
+        <table><thead><tr><th>Placeholder</th><th>Original</th><th>Found by</th></tr></thead><tbody id="mapping"></tbody></table>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const GROUP = { PERSON: "PERSON", ORG: "ORG", ADDRESS: "ADDRESS", QUASI: "QUASI", HEALTH: "HEALTH",
+  AHV: "ID", CF: "ID", UID: "ID", PIVA: "ID", ID: "ID", IP: "ID", EMAIL: "CONTACT", PHONE: "CONTACT",
+  IBAN: "FINANCIAL", CARD: "FINANCIAL", DOB: "DATE" };
+let state = { mapping: {}, spans: [] };
+
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function highlight(text, spans) {
+  let html = "", cur = 0;
+  for (const s of spans) {
+    const g = GROUP[s.type] || "ID";
+    const tip = `${s.type} · ${s.source} · ${s.reason}`;
+    html += esc(text.slice(cur, s.start)) +
+      `<mark class="${s.source}" style="background:var(--${g})" title="${esc(tip)}">${esc(text.slice(s.start, s.end))}<small>${esc(s.placeholder)}</small></mark>`;
+    cur = s.end;
+  }
+  return html + esc(text.slice(cur));
+}
+
+function render(text, data, secs) {
+  state = { mapping: data.mapping, spans: data.spans };
+  $("out").hidden = false;
+  $("llmBanner").hidden = data.llm_ok;
+  $("nFound").textContent = data.spans.length;
+  $("nMissed").textContent = data.rules_only_missed;
+  $("nSecs").textContent = secs.toFixed(1);
+  $("highlighted").innerHTML = data.spans.length ? highlight(text, data.spans) : "No personal data detected.";
+  $("redacted").textContent = data.redacted;
+  const source = {};
+  for (const s of data.spans) source[s.placeholder] = s.source;
+  $("mapping").innerHTML = Object.entries(data.mapping).map(([k, v]) =>
+    `<tr><td><code>${esc(k)}</code></td><td>${esc(v)}</td><td>${esc(source[k] || "")}</td></tr>`).join("");
+  const used = [...new Set(data.spans.map((s) => GROUP[s.type] || "ID"))];
+  $("legend").innerHTML = used.map((g) => `<span style="background:var(--${g})">${g}</span>`).join("");
+}
+
+async function redact() {
+  const text = $("input").value;
+  $("busy").hidden = false; $("redact").disabled = true;
+  const t0 = performance.now();
+  try {
+    const r = await fetch("/api/redact", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }) });
+    if (!r.ok) throw new Error(await r.text());
+    render(text, await r.json(), (performance.now() - t0) / 1000);
+  } catch (e) {
+    alert("Redaction failed: " + e.message);
+  } finally {
+    $("busy").hidden = true; $("redact").disabled = !$("input").value.trim();
+  }
+}
+
+$("input").addEventListener("input", () => { $("redact").disabled = !$("input").value.trim(); });
+$("redact").addEventListener("click", redact);
+$("copy").addEventListener("click", () => navigator.clipboard.writeText($("redacted").textContent));
+</script>
+</body>
+</html>
