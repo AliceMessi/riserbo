@@ -30,7 +30,7 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
   Learner check: Click the Ticino sample and see "unico medico di base a Bosco Gurin" flagged as QUASI.
   Commit: `Add Apertus contextual detection with JSON-schema output`
 
-- [ ] **3. Restore answers and see what rules alone would leak**
+- [x] **3. Restore answers and see what rules alone would leak**
   Becomes usable: Restore panel turns placeholders back into originals; counter shows items rules alone would have missed; IT/DE/FR sample documents.
   Why now: Closes the core loop end to end.
   PRD ref: `prd.md > Restore`, `prd.md > Rules-only Comparison`, `prd.md > The Core Journey` (steps 5-7)

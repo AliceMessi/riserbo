@@ -8,11 +8,18 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-from . import detectors, llm, pipeline
+from . import detectors, llm, pipeline, restore as restore_mod
 
 STATIC = Path(__file__).parent / "static"
+SAMPLES = Path(__file__).resolve().parents[2] / "data" / "samples"
+SAMPLE_TITLES = {"it_ticino": "Italiano · Ticino", "de_graubuenden": "Deutsch · Graubünden", "fr_gruyere": "Français · Gruyère"}
 
 app = FastAPI(title="Riserbo", docs_url=None, redoc_url=None)
+
+
+class RestoreIn(BaseModel):
+    text: str = Field(max_length=100_000)
+    mapping: dict[str, str]
 
 
 class RedactIn(BaseModel):
@@ -43,3 +50,17 @@ def redact(body: RedactIn) -> dict:
         "rules_only_missed": pipeline.rules_only_missed(rule_spans, spans),
         "llm_ok": llm_ok,
     }
+
+
+@app.get("/api/samples")
+def samples() -> list[dict]:
+    out = []
+    for f in sorted(SAMPLES.glob("*.txt")):
+        out.append({"id": f.stem, "title": SAMPLE_TITLES.get(f.stem, f.stem), "text": f.read_text(encoding="utf-8")})
+    return out
+
+
+@app.post("/api/restore")
+def restore(body: RestoreIn) -> dict:
+    text, unknown = restore_mod.restore(body.text, body.mapping)
+    return {"text": text, "unknown": unknown}

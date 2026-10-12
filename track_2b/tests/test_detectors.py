@@ -80,3 +80,34 @@ def test_names_after_titles():
     assert types("Gentile avvocata Rezzonico,") == [("PERSON", "Rezzonico")]
     assert types("Sehr geehrte Frau Dr. Keller,") == [("PERSON", "Keller")]
     assert types("Mme Sophie Rochat conteste") == [("PERSON", "Sophie Rochat")]
+
+
+def test_redact_restore_round_trip():
+    from riserbo.restore import restore
+    text = "Herr Brunner, AHV 756.9217.0769.85, schreibt an a@b.ch. Gruss, Herr Brunner"
+    redacted, mapping, _ = redact(text, find_all(text))
+    assert "Brunner" not in redacted and "756" not in redacted
+    back, unknown = restore(redacted, mapping)
+    assert back == text and unknown == []
+    answer, unknown = restore("Dear [PERSON_1], see [IBAN_9].", mapping)
+    assert answer == "Dear Brunner, see [IBAN_9]." and unknown == ["[IBAN_9]"]
+
+
+def test_api_end_to_end():
+    from fastapi.testclient import TestClient
+    from riserbo.server import app
+    c = TestClient(app)
+    samples = c.get("/api/samples").json()
+    assert {s["id"] for s in samples} == {"it_ticino", "de_graubuenden", "fr_gruyere"}
+    r = c.post("/api/redact", json={"text": samples[0]["text"], "use_llm": False}).json()
+    back = c.post("/api/restore", json={"text": r["redacted"], "mapping": r["mapping"]}).json()
+    assert back["text"] == samples[0]["text"] and back["unknown"] == []
+
+
+def test_person_numbers_follow_reading_order():
+    from riserbo.detectors import Span
+    text = "Paolo Rossi incontra Elena Bianchi-Neri. Rossi saluta."
+    spans = [Span(0, 11, "Paolo Rossi", "PERSON", "apertus", ""), Span(21, 39, "Elena Bianchi-Neri", "PERSON", "apertus", ""),
+             Span(41, 46, "Rossi", "PERSON", "apertus", "")]
+    redacted, mapping, _ = redact(text, spans)
+    assert redacted == "[PERSON_1] incontra [PERSON_2]. [PERSON_1] saluta."

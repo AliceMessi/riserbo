@@ -60,14 +60,22 @@ def redact(text: str, spans: list[Span]) -> tuple[str, dict[str, str], list[dict
 
     # Number placeholders in reading order, longest person names first so partial
     # mentions ("Bernasconi") can reuse the full name ("Paolo Bernasconi").
-    persons = sorted((s for s in spans if s.type == "PERSON"), key=lambda s: -len(s.text))
-    for s in persons:
+    persons = [s for s in spans if s.type == "PERSON"]
+    canonical: dict[str, Span] = {}
+    for s in sorted(persons, key=lambda s: -len(s.text)):
         norm = normalise("PERSON", s.text)
-        if norm in person_keys or _person_key(norm, person_keys):
-            continue
-        counters["PERSON"] = counters.get("PERSON", 0) + 1
-        person_keys[norm] = f"[PERSON_{counters['PERSON']}]"
-        mapping[person_keys[norm]] = s.text
+        if norm not in canonical and not _person_key(norm, {k: "[PERSON_" for k in canonical}):
+            canonical[norm] = s
+    # Numbers follow the order in which each person is first mentioned.
+    first_seen: dict[str, int] = {}
+    for s in sorted(persons, key=lambda s: s.start):
+        norm = normalise("PERSON", s.text)
+        key = norm if norm in canonical else _person_key(norm, {k: "[PERSON_" for k in canonical})
+        first_seen.setdefault(key, s.start)
+    for i, key in enumerate(sorted(canonical, key=lambda k: first_seen.get(k, 0)), start=1):
+        person_keys[key] = f"[PERSON_{i}]"
+        mapping[person_keys[key]] = canonical[key].text
+    counters["PERSON"] = len(canonical)
 
     out: list[str] = []
     cursor = 0

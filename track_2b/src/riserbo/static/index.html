@@ -94,6 +94,14 @@
       </div>
     </div>
   </section>
+
+  <section id="restorePanel" hidden>
+    <h2>3 · Restore</h2>
+    <p class="muted" style="margin-top:0">Paste the answer you got from the external AI. Placeholders are replaced with the original values, locally.</p>
+    <textarea id="answer" placeholder="e.g. Dear [PERSON_1], regarding the loan for [ADDRESS_1]…"></textarea>
+    <div class="row"><button id="restore" class="primary">Restore</button><span class="muted" id="unknown"></span></div>
+    <div id="restored" class="doc" style="margin-top:12px" hidden></div>
+  </section>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -131,7 +139,33 @@ function render(text, data, secs) {
     `<tr><td><code>${esc(k)}</code></td><td>${esc(v)}</td><td>${esc(source[k] || "")}</td></tr>`).join("");
   const used = [...new Set(data.spans.map((s) => GROUP[s.type] || "ID"))];
   $("legend").innerHTML = used.map((g) => `<span style="background:var(--${g})">${g}</span>`).join("");
+  $("restorePanel").hidden = false;
 }
+
+async function loadSamples() {
+  try {
+    const list = await (await fetch("/api/samples")).json();
+    $("samples").innerHTML = "Samples: ";
+    for (const s of list) {
+      const b = document.createElement("button");
+      b.textContent = s.title;
+      b.addEventListener("click", () => { $("input").value = s.text; $("redact").disabled = false; });
+      $("samples").appendChild(b);
+      $("samples").append(" ");
+    }
+  } catch { /* samples are optional */ }
+}
+loadSamples();
+
+async function restore() {
+  const r = await fetch("/api/restore", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: $("answer").value, mapping: state.mapping }) });
+  const data = await r.json();
+  $("restored").hidden = false;
+  $("restored").textContent = data.text;
+  $("unknown").textContent = data.unknown.length ? `Unknown placeholders left as they are: ${data.unknown.join(", ")}` : "";
+}
+$("restore").addEventListener("click", restore);
 
 async function redact() {
   const text = $("input").value;
