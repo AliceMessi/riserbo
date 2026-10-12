@@ -40,7 +40,7 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
   Learner check: Redact a sample, edit the redacted text like an AI answer, paste it in Restore and see real names return.
   Commit: `Add restore and rules-only comparison`
 
-- [ ] **4. Measure it: multilingual evaluation**
+- [x] **4. Measure it: multilingual evaluation**
   Becomes usable: `make eval` prints leak rate / precision / recall for rules-only vs rules + Apertus (and rizzo-pii if installed) and writes `data/eval/results.json`.
   Why now: Answers the open question in `spec.md > Decisions and Open Issues` and gives judges numbers.
   PRD ref: `prd.md > Evaluation (judge-facing)`
