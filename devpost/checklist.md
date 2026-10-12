@@ -60,7 +60,7 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
   Learner check: Run `make run`, open the page and redact a sample.
   Commit: `Add Docker make run with offline model server`
 
-- [ ] **6. Explain it: README, technical report, diagram**
+- [x] **6. Explain it: README, technical report, diagram**
   Becomes usable: Root README, `track_2b/technical_report.md` + PDF (≤6 pages), architecture diagram, screenshots.
   Why now: Submission requirements for both hackathons.
   PRD ref: `prd.md > What We're Building`
@@ -81,7 +81,7 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
 
 ## Code Tour and App Map
 
-- [ ] Learning wrap-up + `devpost/app-map.html`.
+- [x] Learning wrap-up + `devpost/app-map.html`. Activity: evidence-based recap of the spec's open question (instability of single-prompt JSON → two passes + `NONE` sentinel → confirmed by repeated runs and the 60-document evaluation), not a hands-on tour (the learner delegated the build). Map written at `devpost/app-map.html` with a reference route; reflection question not yet offered.
 
 ## Revisions
 - Slice 2: a single extraction prompt was unstable on Apertus 1.5 8B Q4 (same chunk sometimes returned an empty list; the model "wants" to reason before answering). Changed to two focused passes per chunk (identity: PERSON/ORG/ADDRESS/ID; context: HEALTH/QUASI), smaller chunks (~500 chars), and a schema with `minItems: 1` plus a `NONE` sentinel so the model cannot close the list prematurely. Result: identical output on repeated runs. Updates `spec.md > Apertus Client (llm.py)`.

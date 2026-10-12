@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riserbo — App map</title>
+<style>
+  body { margin: 0; padding: 32px clamp(16px, 5vw, 64px); font: 15px/1.6 system-ui, "Segoe UI", sans-serif; color: #111; background: #fff; max-width: 920px; }
+  h1 { font-size: 26px; margin: 0 0 4px; } h1::before { content: ""; display: inline-block; width: 14px; height: 14px; background: #d52b1e; margin-right: 10px; }
+  h2 { font-size: 17px; margin: 28px 0 8px; border-bottom: 1px solid #e3e3e3; padding-bottom: 4px; }
+  code { font: 13px ui-monospace, Consolas, monospace; background: #f5f5f3; padding: 1px 4px; border-radius: 3px; }
+  ol li, ul li { margin: 6px 0; }
+  .muted { color: #5f6368; font-size: 13px; }
+  svg { max-width: 100%; height: auto; }
+  details { margin: 8px 0; } summary { cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Riserbo — App map</h1>
+<p class="muted">Reference snapshot of the code after slice 5 (commit <code>5ecef2f</code>). It can drift as the code changes.</p>
+
+<h2>What the app does</h2>
+<p>Riserbo hides personal data in a Swiss or Italian document before it is shared with an outside AI, then puts the real values back into the AI's answer. It has three pieces: <strong>rules</strong> for identifiers with checksums, <strong>Apertus</strong> for names and context, and a <strong>placeholder pipeline</strong> that replaces each value with a token such as <code>[PERSON_1]</code> and restores it later.</p>
+
+<h2>One action: pressing <em>Redact</em></h2>
+<svg viewBox="0 0 860 170" role="img" aria-label="Redact button calls /api/redact, which runs detectors.find_all and llm.find_entities, then pipeline.merge and pipeline.redact, and returns highlighted text">
+  <defs><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#111"/></marker></defs>
+  <g font-family="system-ui, sans-serif" font-size="13">
+    <rect x="5" y="55" width="140" height="56" rx="6" fill="#f7f7f5" stroke="#999"/><text x="75" y="80" text-anchor="middle">Redact button</text><text x="75" y="98" text-anchor="middle" fill="#555">index.html</text>
+    <rect x="185" y="55" width="140" height="56" rx="6" fill="#fff" stroke="#d52b1e"/><text x="255" y="80" text-anchor="middle">POST /api/redact</text><text x="255" y="98" text-anchor="middle" fill="#555">server.py</text>
+    <rect x="365" y="10" width="180" height="50" rx="6" fill="#fff1b8"/><text x="455" y="32" text-anchor="middle">detectors.find_all</text><text x="455" y="50" text-anchor="middle" fill="#555">checksum rules</text>
+    <rect x="365" y="106" width="180" height="50" rx="6" fill="#fbd3d3"/><text x="455" y="128" text-anchor="middle">llm.find_entities</text><text x="455" y="146" text-anchor="middle" fill="#555">Apertus, 2 passes</text>
+    <rect x="585" y="55" width="140" height="56" rx="6" fill="#dfe7fb"/><text x="655" y="80" text-anchor="middle">pipeline.merge</text><text x="655" y="98" text-anchor="middle">+ redact</text>
+    <rect x="755" y="55" width="100" height="56" rx="6" fill="#d7f0e3"/><text x="805" y="80" text-anchor="middle">highlights,</text><text x="805" y="98" text-anchor="middle">mapping</text>
+    <line x1="145" y1="83" x2="183" y2="83" stroke="#111" marker-end="url(#a)"/>
+    <line x1="325" y1="75" x2="363" y2="40" stroke="#111" marker-end="url(#a)"/>
+    <line x1="325" y1="91" x2="363" y2="128" stroke="#111" marker-end="url(#a)"/>
+    <line x1="545" y1="40" x2="583" y2="72" stroke="#111" marker-end="url(#a)"/>
+    <line x1="545" y1="128" x2="583" y2="95" stroke="#111" marker-end="url(#a)"/>
+    <line x1="725" y1="83" x2="753" y2="83" stroke="#111" marker-end="url(#a)"/>
+  </g>
+</svg>
+
+<h2>Reference route (3 stops)</h2>
+<p class="muted">A route to read in your editor. It was not toured interactively.</p>
+<ol>
+  <li><code>track_2b/src/riserbo/server.py</code>, function <code>redact</code>. This is the entry point: it runs the rules, calls Apertus, merges the results and returns spans, redacted text and mapping.</li>
+  <li><code>track_2b/src/riserbo/llm.py</code>, functions <code>find_entities</code>, <code>_call</code>, <code>locate</code>. Each chunk goes through the <code>IDENTITY</code> and <code>CONTEXT</code> passes with a JSON schema. <code>locate</code> keeps a span only if it is found verbatim in the document.</li>
+  <li><code>track_2b/src/riserbo/pipeline.py</code>, functions <code>merge</code> and <code>redact</code>. Checksum rules win overlaps. The same value always gets the same placeholder, and people are numbered in reading order.</li>
+</ol>
+
+<h2>To change this, start here</h2>
+<ul>
+  <li><strong>Add a new identifier</strong> (e.g. Swiss licence plates): add a regex and validator in <code>detectors.py</code> → <code>find_all</code>, plus a placeholder family in <code>pipeline.py</code> → <code>FAMILY</code>, plus a test in <code>tests/test_detectors.py</code>.</li>
+  <li><strong>Change what Apertus looks for</strong>: edit <code>IDENTITY_PROMPT</code> / <code>CONTEXT_PROMPT</code> and their few-shot examples in <code>llm.py</code>, then run <code>make eval</code> to see the effect on leak rate.</li>
+  <li><strong>Change the page</strong>: <code>track_2b/src/riserbo/static/index.html</code> (colours are CSS variables at the top).</li>
+  <li><strong>Point to another model server</strong>: set <code>LLM_BASE_URL</code> and <code>LLM_NAME</code> (see <code>.env.example</code>).</li>
+</ul>
+
+<h2>A practice to reuse</h2>
+<p><strong>Measure before trusting the model.</strong> The spec recorded an open question: can a 4-bit 8B model find indirect identifiers? The first live runs looked promising but were unstable: the same chunk sometimes returned an empty list. Running each sample twice exposed this, and the fix (two focused passes, <code>minItems: 1</code> with a <code>NONE</code> sentinel) was confirmed by identical repeated output. The evaluation (<code>src/riserbo/eval/run.py</code>, results in <code>data/eval/results.json</code>) then put a number on it: 56.7% quasi-identifier recall. On any LLM feature, repeat the same input, and build a small scored test set before polishing the UI.</p>
+<p class="muted">Recorded under <code>devpost/spec.md</code> → <em>Decisions and Open Issues</em> and <code>devpost/checklist.md</code> → <em>Revisions</em>.</p>
+
+<h2>Run it again</h2>
+<details open><summary>Docker (no GPU needed)</summary>
+<p><code>cd track_2b &amp;&amp; make run</code>, then open <code>http://localhost:8080</code>.</p></details>
+<details><summary>Against an existing OpenAI-compatible endpoint</summary>
+<p><code>LLM_BASE_URL=http://host.docker.internal:1234/v1 make run-app</code></p></details>
+<details><summary>Tests and evaluation</summary>
+<p><code>make test</code> and <code>make eval</code></p></details>
+</body>
+</html>
