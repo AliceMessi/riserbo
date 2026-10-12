@@ -29,7 +29,7 @@ On a synthetic test set of 60 Swiss/Italian documents in three languages (`make 
 
 ## Try it
 
-Requirements: Docker with Compose, ~8 GB free RAM, ~6 GB disk. No GPU needed.
+Requirements: Docker with Compose, ~8 GB free RAM, ~6 GB disk. No GPU needed. On CPU, the first start loads the model for a few minutes, and a one-page document takes a few minutes. With a GPU endpoint (see below) it takes seconds.
 
 ```bash
 cd track_2b

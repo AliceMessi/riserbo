@@ -96,7 +96,7 @@ Riserbo is deployable **(a) on-premise** and **(b) air-gapped**.
 - **Synthetic test set.** Templates are regular and shorter than real files. Real documents (OCR noise, tables, long contracts) will score lower. The set measures relative differences between setups, not absolute performance on client files.
 - **Quasi-identifiers are subjective.** The gold set marks one quasi-identifier per document. Whether a phrase identifies someone depends on the reader's knowledge.
 - **Model size.** An 8B model at 4 bits misses some names in signatures and greeting lines. The title-plus-surname rule and surname propagation compensate partly. A 70B model, or a second verification pass, would likely help but needs more hardware.
-- **CPU speed.** On CPU inside Docker, a one-page document takes about a minute; with a consumer GPU, 15–25 seconds.
+- **CPU speed.** On CPU inside Docker the one-page Ticino sample took 224 s on our machine (CPU shared with other workloads), and loading the model took about 4 minutes from a Windows bind mount. With a consumer GPU (GTX 1660 Super, via LM Studio) a document takes 13–25 s. Two passes per chunk double the model calls; this is the price of stable output.
 - **Scope.** Plain text only (no PDF/DOCX). Romansh and Swiss-German dialects are not evaluated. Riserbo is an assistant, not a legal guarantee of anonymity; the user reviews the result.
 
 ## 7. Reproducibility

@@ -50,7 +50,7 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
   Learner check: Run `make eval` and read the table.
   Commit: `Add synthetic multilingual evaluation and results`
 
-- [ ] **5. One command, air-gapped: `make run` in Docker**
+- [x] **5. One command, air-gapped: `make run` in Docker**
   Becomes usable: From a clean checkout, `make run` downloads the model once and starts llama.cpp (offline network) + app.
   Why now: Required by Hack Apertus; proves the on-premise / air-gapped claim.
   PRD ref: `prd.md > The Core Journey` (step 1)

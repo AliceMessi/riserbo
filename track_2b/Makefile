@@ -7,7 +7,7 @@ MODEL_URL  ?= https://huggingface.co/Colby/apertus-v1.5-8b-text-Q4_K_M-GGUF/reso
 # The model (~5 GB) is downloaded once; after that nothing needs the internet.
 run: model
 	docker compose up --build -d
-	@echo "Riserbo is starting on http://localhost:$${RISERBO_PORT:-8080} (the model needs ~1-3 minutes to load on CPU)"
+	@echo "Riserbo is starting on http://localhost:$${RISERBO_PORT:-8080} (on CPU the model takes a few minutes to load; the status pill turns green when ready)"
 	docker compose logs -f app
 
 # Only the app, against an OpenAI-compatible endpoint you already run (e.g. LM Studio, vLLM):
