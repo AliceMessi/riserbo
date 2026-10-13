@@ -72,12 +72,12 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
 
 ## Hands-on Checkpoints
 
-- [ ] Early feedback after slice 2 (learner opens the page and redacts the Ticino sample).
-- [ ] Final review after slice 6.
+- [x] Early feedback after slice 2 (learner opens the page and redacts the Ticino sample). Done later than planned: the learner reviewed the running app and the demo video on 2026-10-13.
+- [x] Final review after slice 6 (2026-10-13): a clean-clone Docker run and a re-run of the evaluation; fixes recorded under Revisions.
 
 ## Final Review
 
-- [ ] Learner confirms the PoC is ready.
+- [x] Learner confirms the PoC is ready (2026-10-13, uploaded the demo video and approved submission).
 
 ## Code Tour and App Map
 
@@ -86,4 +86,4 @@ Build mode: fast (delegated — learner asked the agent to run the build end to 
 ## Revisions
 - Slice 2: a single extraction prompt was unstable on Apertus 1.5 8B Q4 (same chunk sometimes returned an empty list; the model "wants" to reason before answering). Changed to two focused passes per chunk (identity: PERSON/ORG/ADDRESS/ID; context: HEALTH/QUASI), smaller chunks (~500 chars), and a schema with `minItems: 1` plus a `NONE` sentinel so the model cannot close the list prematurely. Result: identical output on repeated runs. Updates `spec.md > Apertus Client (llm.py)`.
 - Slice 2: added deterministic ADDRESS (street + number + postcode) and title-plus-surname PERSON rules after live runs showed Apertus skipping greetings and some addresses; surname propagation hides later mentions ("dott. Bernasconi"). Merge now ranks checksum rules first, then longest span.
-
+- Final review (2026-10-13): Apertus' choice of names shifted between inference backends (LM Studio vs. llama.cpp in Docker), so the wife or the signatory in the Ticino sample was sometimes missed. Added deterministic rules for signatories under a closing formula, relatives named after the relation word, and double-barrelled surnames. Re-ran the evaluation: leak rate 13.2% → 12.6%, person recall 90.0% → 93.3%. Demo samples now use fictional organisations only.

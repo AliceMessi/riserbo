@@ -10,10 +10,10 @@ status: approved
 Reversible redaction of personal data in Swiss and Italian documents, powered by Apertus and running entirely on your own machine.
 
 ## The Unique Kernel
-Small PII taggers and regex catch names, IBANs and tax codes, but miss the people you can recognise **without** a name: "the only GP in Bosco Gurin", "the UBS branch manager in Locarno who was just diagnosed with MS". Riserbo pairs exact Swiss/Italian validators with **Apertus reasoning about indirect identifiers**, swaps every hit for a placeholder, and restores the originals locally after a cloud AI has answered. Nothing personal ever leaves the building, and Apertus itself runs air-gapped.
+Small PII taggers and regex catch names, IBANs and tax codes, but miss the people you can recognise **without** a name: "the only GP in Bosco Gurin", "the bank branch manager in Locarno who was just diagnosed with MS". Riserbo pairs exact Swiss/Italian validators with **Apertus reasoning about indirect identifiers**, swaps every hit for a placeholder, and restores the originals locally after a cloud AI has answered. Nothing personal ever leaves the building, and Apertus itself runs air-gapped.
 
 ## Who It's For
-(delegated) A legal or compliance assistant at a small Ticino law firm or fiduciary who wants to use ChatGPT-class tools on client files without breaching the Swiss data-protection act (revFADP) or professional secrecy. Today they either retype documents by hand with names blacked out, or they don't use AI at all.
+(delegated) A legal or compliance assistant at a small Ticino law firm or fiduciary who wants to use cloud AI assistants on client files without breaching the Swiss data-protection act (revFADP) or professional secrecy. Today they either retype documents by hand with names blacked out, or they don't use AI at all.
 
 ## The Core Loop
 1. Paste (or load) a document in Italian, German or French.
