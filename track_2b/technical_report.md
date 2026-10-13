@@ -2,6 +2,8 @@
 
 Reversible redaction of personal data in Swiss and Italian documents, powered by Apertus and running entirely on your own machine.
 
+<img src="docs/qr-repo.svg" alt="QR code to the GitHub repository" width="110" align="right">
+
 - **Track:** Track 2B — Own project
 - **Event:** Online
 - **Team:** Riserbo — Alfredo de Candia (solo)
@@ -10,7 +12,7 @@ Reversible redaction of personal data in Swiss and Italian documents, powered by
 
 ## 1. Summary
 
-Swiss lawyers, fiduciaries and compliance teams want to use cloud AI on client files, but the Federal Act on Data Protection (revFADP) and professional secrecy (Art. 321 SCC) make sending client data abroad risky. Rule-based anonymisers catch IBANs and tax numbers but miss names in free text. Small taggers catch names but miss **indirect identifiers**: a person recognisable without a name, such as *"l'unico medico di base a Bosco Gurin"* or *"die Gemeindepräsidentin von Obersaxen"*. Riserbo combines checksum-validated rules for Swiss and Italian identifiers with **Apertus 1.5 8B**, which reasons about context in Italian, German and French. Every hit becomes a placeholder; after an external AI has answered, the originals are restored locally. Apertus runs in Docker on an internal network with no internet access. On a 60-document synthetic test set in three languages, Riserbo leaves 13.2% of personal-data characters visible, against 58.2% for rules alone and 29.1% for the rizzo-pii-0.3B tagger, and it is the only setup that finds indirect identifiers.
+Swiss lawyers, fiduciaries and compliance teams want to use cloud AI on client files, but the Federal Act on Data Protection (revFADP) and professional secrecy (Art. 321 SCC) make sending client data abroad risky. Rule-based anonymisers catch IBANs and tax numbers but miss names in free text. Small taggers catch names but miss **indirect identifiers**: a person recognisable without a name, such as *"l'unico medico di base a Bosco Gurin"* or *"die Gemeindepräsidentin von Obersaxen"*. Riserbo combines checksum-validated rules for Swiss and Italian identifiers with **Apertus 1.5 8B**, which reasons about context in Italian, German and French. Every hit becomes a placeholder; after an external AI has answered, the originals are restored locally. Apertus runs in Docker on an internal network with no internet access. On a 60-document synthetic test set in three languages, Riserbo leaves 12.6% of personal-data characters visible, against 55.0% for rules alone and 29.1% for the rizzo-pii-0.3B tagger, and it is the only setup that finds indirect identifiers.
 
 ## 2. Architecture
 
@@ -61,33 +63,33 @@ Riserbo is deployable **(a) on-premise** and **(b) air-gapped**.
 
 | Setup | Leak rate ↓ | Entity recall | Precision | s/doc |
 |---|---|---|---|---|
-| Rules only | 58.2% | 41.8% | 100.0% | 0.0 |
-| Apertus only | 25.4% | 72.7% | 93.9% | 12.88 |
-| **Riserbo (rules + Apertus)** | 13.2% | 89.1% | 92.7% | 12.88 |
-| rizzo-pii-0.3B (reference) | 29.1% | 74.2% | 84.5% | 0.19 |
-| Rules + rizzo-pii | 26.0% | 77.4% | 80.3% | 0.19 |
+| Rules only | 55.0% | 46.5% | 100.0% | 0.0 |
+| Apertus only | 26.4% | 72.9% | 93.7% | 13.38 |
+| **Riserbo (rules + Apertus)** | 12.6% | 90.1% | 92.8% | 13.38 |
+| rizzo-pii-0.3B (reference) | 29.1% | 74.2% | 84.5% | 0.21 |
+| Rules + rizzo-pii | 26.0% | 77.4% | 80.3% | 0.21 |
 
 | Recall by type | PERSON | ORG | ADDRESS | ID | CONTACT | DATE | HEALTH | QUASI |
 |---|---|---|---|---|---|---|---|---|
-| Rules only | 10.0% | 0.0% | 93.3% | 100.0% | 100.0% | 100.0% | 0.0% | 0.0% |
-| Apertus only | 85.0% | 83.3% | 96.7% | 84.9% | 16.7% | 0.0% | 81.7% | 56.7% |
-| **Riserbo (rules + Apertus)** | 90.0% | 83.3% | 100.0% | 100.0% | 100.0% | 100.0% | 81.7% | 56.7% |
+| Rules only | 25.6% | 0.0% | 93.3% | 100.0% | 100.0% | 100.0% | 0.0% | 0.0% |
+| Apertus only | 85.6% | 83.3% | 96.7% | 84.9% | 16.7% | 0.0% | 81.7% | 56.7% |
+| **Riserbo (rules + Apertus)** | 93.3% | 83.3% | 100.0% | 100.0% | 100.0% | 100.0% | 81.7% | 56.7% |
 | rizzo-pii-0.3B (reference) | 98.9% | 78.3% | 100.0% | 79.6% | 100.0% | 100.0% | 1.7% | 0.0% |
 | Rules + rizzo-pii | 98.9% | 78.3% | 100.0% | 100.0% | 100.0% | 100.0% | 1.7% | 0.0% |
 
 | Leak rate by language | IT | DE | FR |
 |---|---|---|---|
-| Rules only | 62.8% | 56.2% | 55.4% |
-| Apertus only | 20.3% | 31.6% | 24.9% |
-| **Riserbo (rules + Apertus)** | 13.5% | 16.6% | 9.7% |
+| Rules only | 59.8% | 52.8% | 52.2% |
+| Apertus only | 21.1% | 32.5% | 26.2% |
+| **Riserbo (rules + Apertus)** | 12.3% | 16.3% | 9.3% |
 | rizzo-pii-0.3B (reference) | 29.4% | 31.9% | 26.3% |
 | Rules + rizzo-pii | 24.8% | 28.2% | 25.4% |
 
 **Findings.**
-- Riserbo cuts the leak rate from 58.2% (rules) to **13.2%**, and stays below 17% in all three languages. Precision stays at 92.7%: about 7 in 100 redactions cover text that is not personal data (over-redaction, which the PRD prefers to leaks).
+- Riserbo cuts the leak rate from 55.0% (rules) to **12.6%**, and stays below 17% in all three languages. Precision stays at 92.8%: about 7 in 100 redactions cover text that is not personal data (over-redaction, which the PRD prefers to leaks).
 - **Apertus is what finds context.** Only the Apertus setups recover quasi-identifiers (56.7%) and health data (81.7%); rizzo-pii scores 0.0% and 1.7%, because these are not in its tag set.
 - **Rules and Apertus complement each other.** Apertus alone misses most phone numbers, e-mails and dates (which the prompt tells it to ignore), and the rules have no notion of context. Merged, each covers the other's blind spot.
-- **Honest weak spot.** rizzo-pii is better at plain person names (98.9% vs 90.0%) and about 70× faster. On the three demo letters, the names the 8B model skipped were in greeting and signature lines. A natural next step is an ensemble: rizzo-pii or a distilled tagger for names, Apertus for context.
+- **Honest weak spot.** rizzo-pii is better at plain person names (98.9% vs 93.3%) and about 60× faster. The names the 8B model skipped were mostly in greeting and signature lines; the signature, relative and surname rules added after the first evaluation raised rules-only person recall from 10.0% to 25.6% and Riserbo's from 90.0% to 93.3%. A natural next step is an ensemble: rizzo-pii or a distilled tagger for names, Apertus for context.
 - Quasi-identifier recall (56.7%) is the clearest room for improvement; per-item predictions are not stored by the scorer, so the failure analysis is left to the next iteration.
 
 

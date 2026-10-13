@@ -6,8 +6,8 @@
   "llm_failed_documents": 0,
   "setups": {
     "rules": {
-      "leak_rate": 0.5818,
-      "entity_recall": 0.4175,
+      "leak_rate": 0.5498,
+      "entity_recall": 0.4646,
       "precision": 1.0,
       "recall_by_type": {
         "ADDRESS": 0.933,
@@ -16,17 +16,17 @@
         "HEALTH": 0.0,
         "ID": 1.0,
         "ORG": 0.0,
-        "PERSON": 0.1,
+        "PERSON": 0.256,
         "QUASI": 0.0
       },
       "gold_items": 594,
-      "redactions": 248,
+      "redactions": 277,
       "seconds_per_doc": 0.0
     },
     "apertus": {
-      "leak_rate": 0.2544,
-      "entity_recall": 0.7273,
-      "precision": 0.939,
+      "leak_rate": 0.2641,
+      "entity_recall": 0.729,
+      "precision": 0.9369,
       "recall_by_type": {
         "ADDRESS": 0.967,
         "CONTACT": 0.167,
@@ -34,17 +34,17 @@
         "HEALTH": 0.817,
         "ID": 0.849,
         "ORG": 0.833,
-        "PERSON": 0.85,
+        "PERSON": 0.856,
         "QUASI": 0.567
       },
       "gold_items": 594,
-      "redactions": 705,
-      "seconds_per_doc": 12.88
+      "redactions": 681,
+      "seconds_per_doc": 13.38
     },
     "rules+apertus": {
-      "leak_rate": 0.132,
-      "entity_recall": 0.8906,
-      "precision": 0.9269,
+      "leak_rate": 0.1256,
+      "entity_recall": 0.9007,
+      "precision": 0.9275,
       "recall_by_type": {
         "ADDRESS": 1.0,
         "CONTACT": 1.0,
@@ -52,12 +52,12 @@
         "HEALTH": 0.817,
         "ID": 1.0,
         "ORG": 0.833,
-        "PERSON": 0.9,
+        "PERSON": 0.933,
         "QUASI": 0.567
       },
       "gold_items": 594,
-      "redactions": 588,
-      "seconds_per_doc": 12.88
+      "redactions": 593,
+      "seconds_per_doc": 13.38
     },
     "rizzo-pii-0.3B": {
       "leak_rate": 0.2913,
@@ -75,7 +75,7 @@
       },
       "gold_items": 594,
       "redactions": 850,
-      "seconds_per_doc": 0.19
+      "seconds_per_doc": 0.21
     },
     "rules+rizzo": {
       "leak_rate": 0.2603,
@@ -93,28 +93,28 @@
       },
       "gold_items": 594,
       "redactions": 671,
-      "seconds_per_doc": 0.19
+      "seconds_per_doc": 0.21
     }
   },
   "leak_rate_by_language": {
     "it": {
-      "rules": 0.6283,
-      "apertus": 0.2033,
-      "rules+apertus": 0.1353,
+      "rules": 0.5979,
+      "apertus": 0.2106,
+      "rules+apertus": 0.1232,
       "rizzo-pii-0.3B": 0.2943,
       "rules+rizzo": 0.2476
     },
     "de": {
-      "rules": 0.5616,
-      "apertus": 0.3161,
-      "rules+apertus": 0.1661,
+      "rules": 0.5282,
+      "apertus": 0.3245,
+      "rules+apertus": 0.1632,
       "rizzo-pii-0.3B": 0.3189,
       "rules+rizzo": 0.2816
     },
     "fr": {
-      "rules": 0.554,
-      "apertus": 0.2486,
-      "rules+apertus": 0.0971,
+      "rules": 0.5216,
+      "apertus": 0.2618,
+      "rules+apertus": 0.0932,
       "rizzo-pii-0.3B": 0.2627,
       "rules+rizzo": 0.2535
     }

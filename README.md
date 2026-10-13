@@ -15,15 +15,15 @@ Apertus 1.5 8B runs in its own Docker container on an internal network with **no
 
 ## Results
 
-On a synthetic test set of 60 Swiss/Italian documents in three languages (`make eval`), Riserbo leaves **13.2%** of personal-data characters visible, against **58.2%** for rules alone and **29.1%** for the rizzo-pii-0.3B tagger. It is the only setup that finds indirect identifiers (recall 56.7%) and most health data (81.7%).
+On a synthetic test set of 60 Swiss/Italian documents in three languages (`make eval`), Riserbo leaves **12.6%** of personal-data characters visible, against **55.0%** for rules alone and **29.1%** for the rizzo-pii-0.3B tagger. It is the only setup that finds indirect identifiers (recall 56.7%) and most health data (81.7%).
 
 | Setup | Leak rate ↓ | Entity recall | Precision | s/doc |
 |---|---|---|---|---|
-| Rules only | 58.2% | 41.8% | 100.0% | 0.0 |
-| Apertus only | 25.4% | 72.7% | 93.9% | 12.88 |
-| **Riserbo (rules + Apertus)** | 13.2% | 89.1% | 92.7% | 12.88 |
-| rizzo-pii-0.3B (reference) | 29.1% | 74.2% | 84.5% | 0.19 |
-| Rules + rizzo-pii | 26.0% | 77.4% | 80.3% | 0.19 |
+| Rules only | 55.0% | 46.5% | 100.0% | 0.0 |
+| Apertus only | 26.4% | 72.9% | 93.7% | 13.38 |
+| **Riserbo (rules + Apertus)** | 12.6% | 90.1% | 92.8% | 13.38 |
+| rizzo-pii-0.3B (reference) | 29.1% | 74.2% | 84.5% | 0.21 |
+| Rules + rizzo-pii | 26.0% | 77.4% | 80.3% | 0.21 |
 
 60 synthetic documents (20 IT, 20 DE, 20 FR), 594 gold items, Apertus 1.5 8B Q4_K_M, temperature 0, 0 failed model calls. s/doc measured on a GTX 1660 Super (6 GB) with the CPU shared by other workloads. Full breakdown in the [technical report](track_2b/technical_report.md#5-evaluation).
 
