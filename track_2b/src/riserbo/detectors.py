@@ -141,6 +141,44 @@ HONORIFIC_RE = re.compile(
 )
 
 
+_CAP = r"[A-ZÀ-Ý][a-zà-ÿ'’]+"
+_FULL_NAME = rf"{_CAP}(?:-{_CAP})?(?:[ \t]+{_CAP}(?:-{_CAP})?){{1,2}}"
+# The name under a closing formula is the signatory.
+SIGNATURE_RE = re.compile(
+    r"(?:Cordiali saluti|Distinti saluti|Saluti cordiali|Con osservanza|Freundliche Gr[üu](?:ss|ß)e|"
+    r"Mit freundlichen Gr[üu](?:ss|ß)en|Beste Gr[üu](?:ss|ß)e|Meilleures salutations|[Ss]alutations distinguées|"
+    r"Cordialement|Best regards|Kind regards)[^\n]*\n[ \t]*"
+    rf"(?:(?:Dr|Prof|Me|Avv|avv|Dott|dott|Ing|ing)\.?[ \t]+)*({_FULL_NAME})(?![\w'’-])"
+)
+# Relatives named right after the relation: "la moglie, Elena Bernasconi-Dazio".
+_RELATIVE = (r"(?:moglie|marito|figli[oa]|madre|padre|fratello|sorella|compagn[oa]|"
+             r"Ehefrau|Ehemann|Sohn|Tochter|Mutter|Vater|Bruder|Schwester|"
+             r"épouse|femme|mari|fils|fille|mère|père|frère|sœur|compagne|compagnon)")
+RELATIVE_RE = re.compile(rf"\b{_RELATIVE},?[ \t]+({_FULL_NAME})(?![\w'’-])")
+# Capitalised words that can stand before a surname without being a first name.
+_NOT_FIRST_NAME = {"Il", "La", "Lo", "Le", "Gli", "Un", "Una", "Der", "Die", "Das", "Den", "Dem", "Ein", "Eine",
+                   "Les", "Une", "Herr", "Herrn", "Frau", "Madame", "Monsieur", "Signora", "Signor", "Famiglia",
+                   "Familie", "Famille", "Studio", "Avvocata", "Avvocato", "Mme", "Mlle", "Me", "Dr",
+                   "Prof", "Sig", "Dott", "Avv", "Étude", "Kanzlei", "Cabinet", "Banca", "Bank", "Banque"}
+
+
+def surname_mentions(text: str, surname: str) -> list[tuple[int, int]]:
+    """Mentions of a known surname, widened to a first name in front and to double-barrelled
+    forms, so 'Elena Bernasconi-Dazio' is caught once 'Paolo Bernasconi' is known."""
+    if len(surname) < 3:
+        return []
+    rx = re.compile(rf"(?<![\w'’-])(?:({_CAP})[ \t]+)?(?:{_CAP}-)?{re.escape(surname)}(?:-{_CAP})?(?![\w'’-])")
+    out = []
+    for m in rx.finditer(text):
+        start = m.start()
+        if m.group(1) in _NOT_FIRST_NAME:
+            start = m.end(1)
+            while text[start] in " \t":
+                start += 1
+        out.append((start, m.end()))
+    return out
+
+
 def _digits(s: str) -> str:
     return re.sub(r"\D", "", s)
 
@@ -186,8 +224,27 @@ def find_all(text: str) -> list[Span]:
         add(m.start(), m.end(), "ADDRESS", "Postal address (street and number)")
     for m in HONORIFIC_RE.finditer(text):
         add(m.start(1), m.end(1), "PERSON", "Name after a title or form of address")
+    for m in SIGNATURE_RE.finditer(text):
+        add(m.start(1), m.end(1), "PERSON", "Signatory under a closing formula")
+    for m in RELATIVE_RE.finditer(text):
+        add(m.start(1), m.end(1), "PERSON", "Relative named after the relation")
+    # A surname found in a full name is hidden wherever it appears again.
+    for name in {s.text for s in spans if s.type == "PERSON"}:
+        for part in surnames(name):
+            for start, end in surname_mentions(text, part):
+                add(start, end, "PERSON", f"Surname of {name}")
 
     return resolve_overlaps(spans)
+
+
+def surnames(name: str) -> list[str]:
+    """Surname of a multi-word name, so 'dott. Bernasconi' is hidden once 'Paolo Bernasconi' is known."""
+    tokens = [t for t in re.split(r"\s+", name.strip()) if t[:1].isupper() and len(t) >= 3 and not t.endswith(".")]
+    if len(tokens) < 2:
+        return []
+    last = tokens[-1].strip(",;:")
+    # Double-barrelled surnames: both halves identify the person.
+    return [last, *[p for p in last.split("-") if len(p) >= 3 and p != last]]
 
 
 # Identifier types with a checksum are more trustworthy than generic ones.

@@ -16,6 +16,7 @@ from dataclasses import dataclass
 
 import httpx
 
+from . import detectors
 from .detectors import Span
 
 BASE_URL = os.environ.get("LLM_BASE_URL", "http://localhost:1234/v1").rstrip("/")
@@ -193,10 +194,7 @@ def locate(text: str, needle: str) -> list[tuple[int, int]]:
     return [(m.start(), m.end()) for m in rx.finditer(text)]
 
 
-def surnames(name: str) -> list[str]:
-    """Surname of a multi-word name, so 'dott. Bernasconi' is hidden once 'Paolo Bernasconi' is known."""
-    tokens = [t for t in re.split(r"\s+", name.strip()) if t[:1].isupper() and len(t) >= 3 and not t.endswith(".")]
-    return [tokens[-1]] if len(tokens) >= 2 else []
+surnames = detectors.surnames
 
 
 def to_spans(text: str, entities: list[dict]) -> list[Span]:
@@ -210,7 +208,7 @@ def to_spans(text: str, entities: list[dict]) -> list[Span]:
             spans.append(Span(start, end, text[start:end], kind, "apertus", reason))
         if kind == "PERSON":
             for part in surnames(e.get("text", "")):
-                for start, end in locate(text, part):
+                for start, end in detectors.surname_mentions(text, part):
                     spans.append(Span(start, end, text[start:end], "PERSON", "apertus", f"Surname of {e['text']}"))
     return spans
 

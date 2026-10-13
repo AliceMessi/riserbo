@@ -49,8 +49,8 @@ Reproduce the evaluation with `make eval`, and run the tests with `make test`.
 
 ![Architecture](track_2b/docs/architecture.svg)
 
-- **Rules** (`detectors.py`) find identifiers that have a checksum or a strict format: Swiss AHV/AVS (EAN-13), IBAN (mod-97), Swiss UID (mod-11), Italian codice fiscale and partita IVA, payment cards (Luhn), e-mails, phones, dates of birth, postal addresses, and names after a title. A number is only redacted when its checksum is valid, so invoice numbers and amounts stay readable.
-- **Apertus** (`llm.py`) runs two focused passes on each ~500-character chunk. The *identity* pass finds people, organisations, addresses and reference numbers. The *context* pass finds health data and **quasi-identifiers**. Output is constrained by a JSON schema, and every span must appear verbatim in the document (hallucination guard). Surnames are propagated, so "dott. Bernasconi" is hidden once "Paolo Bernasconi" is found.
+- **Rules** (`detectors.py`) find identifiers that have a checksum or a strict format: Swiss AHV/AVS (EAN-13), IBAN (mod-97), Swiss UID (mod-11), Italian codice fiscale and partita IVA, payment cards (Luhn), e-mails, phones, dates of birth, postal addresses, names after a title, signatories under a closing formula and relatives ("la moglie, Elena …"). A number is only redacted when its checksum is valid, so invoice numbers and amounts stay readable.
+- **Apertus** (`llm.py`) runs two focused passes on each ~500-character chunk. The *identity* pass finds people, organisations, addresses and reference numbers. The *context* pass finds health data and **quasi-identifiers**. Output is constrained by a JSON schema, and every span must appear verbatim in the document (hallucination guard). Surnames are propagated, so "dott. Bernasconi" and "Elena Bernasconi-Dazio" are hidden once "Paolo Bernasconi" is found.
 - **Merge and placeholders** (`pipeline.py`): checksum rules win, otherwise the longer span wins. The same value always gets the same placeholder.
 - **Restore** (`restore.py`): swaps placeholders back. The mapping lives only in the browser page and is never written to disk.
 

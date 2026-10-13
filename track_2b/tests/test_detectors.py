@@ -2,7 +2,7 @@ import random
 
 import pytest
 
-from riserbo import fakeids
+from riserbo import detectors, fakeids
 from riserbo.detectors import ahv_valid, cf_valid, find_all, iban_valid, piva_valid, uid_valid
 from riserbo.pipeline import redact
 
@@ -111,3 +111,29 @@ def test_person_numbers_follow_reading_order():
              Span(41, 46, "Rossi", "PERSON", "apertus", "")]
     redacted, mapping, _ = redact(text, spans)
     assert redacted == "[PERSON_1] incontra [PERSON_2]. [PERSON_1] saluta."
+
+
+def test_signatory_relative_and_double_barrelled_surname():
+    text = ("Il mio cliente, dott. Paolo Bernasconi, e il dott. Bernasconi senior.\n"
+            "La moglie, Elena Bernasconi-Dazio, è la sindaca.\n\nCordiali saluti,\nLisa Pedrazzini\nFiduciaria Valmaggia Sagl")
+    names = {s.text for s in detectors.find_all(text) if s.type == "PERSON"}
+    assert {"Paolo Bernasconi", "Bernasconi", "Elena Bernasconi-Dazio", "Lisa Pedrazzini"} <= names
+    assert not any("Fiduciaria" in n or "Valmaggia" in n for n in names)
+
+
+def test_signatory_in_german_and_french():
+    de = detectors.find_all("Freundliche Grüsse\nMartin Vogt, HR-Leiter")
+    fr = detectors.find_all("Veuillez agréer nos salutations distinguées.\nMe Julien Favre, avocat")
+    assert [s.text for s in de if s.type == "PERSON"] == ["Martin Vogt"]
+    assert [s.text for s in fr if s.type == "PERSON"] == ["Julien Favre"]
+
+
+def test_surname_mentions_skip_articles():
+    text = "Die Bernasconi AG und Frau Bernasconi"
+    assert [text[a:b] for a, b in detectors.surname_mentions(text, "Bernasconi")] == ["Bernasconi", "Bernasconi"]
+
+
+def test_surname_mentions_skip_titles_and_firms():
+    text = "Mme Rochat, Étude Favre"
+    assert [text[a:b] for a, b in detectors.surname_mentions(text, "Rochat")] == ["Rochat"]
+    assert [text[a:b] for a, b in detectors.surname_mentions(text, "Favre")] == ["Favre"]

@@ -18,7 +18,7 @@ Swiss lawyers, fiduciaries and compliance teams want to use cloud AI on client f
 
 | Component | Role | Runs where |
 |---|---|---|
-| `detectors.py` | Regex candidates plus validation: AHV/AVS (EAN-13), IBAN (ISO 13616 mod-97), Swiss UID (mod-11), codice fiscale (check character, omocodia), partita IVA (Luhn, needs VAT context), cards (Luhn), e-mail, phone, IPv4, date of birth (with context), postal address, names after a title | app container |
+| `detectors.py` | Regex candidates plus validation: AHV/AVS (EAN-13), IBAN (ISO 13616 mod-97), Swiss UID (mod-11), codice fiscale (check character, omocodia), partita IVA (Luhn, needs VAT context), cards (Luhn), e-mail, phone, IPv4, date of birth (with context), postal address; names after a title, signatories under a closing formula, relatives named after the relation ("la moglie, …"); surname propagation, including double-barrelled surnames | app container |
 | `llm.py` | Two Apertus passes per ~500-character chunk, JSON-schema constrained; verbatim span location; surname propagation | app → llama.cpp |
 | `pipeline.py` | Merge (checksum rules first, then longest span); stable placeholders per distinct value; persons numbered in reading order | app container |
 | `restore.py` | Placeholder → original, unknown tokens reported | app container |
@@ -95,14 +95,15 @@ Riserbo is deployable **(a) on-premise** and **(b) air-gapped**.
 
 - **Synthetic test set.** Templates are regular and shorter than real files. Real documents (OCR noise, tables, long contracts) will score lower. The set measures relative differences between setups, not absolute performance on client files.
 - **Quasi-identifiers are subjective.** The gold set marks one quasi-identifier per document. Whether a phrase identifies someone depends on the reader's knowledge.
-- **Model size.** An 8B model at 4 bits misses some names in signatures and greeting lines. The title-plus-surname rule and surname propagation compensate partly. A 70B model, or a second verification pass, would likely help but needs more hardware.
+- **Model size.** An 8B model at 4 bits misses some names in signatures and greeting lines, and its choices shift slightly between inference backends (LM Studio vs. llama.cpp in Docker). Deterministic rules for titles, signatures, relatives and surnames make these names independent of the model. A 70B model, or a second verification pass, would likely help but needs more hardware.
 - **CPU speed.** On CPU inside Docker the one-page Ticino sample took 224 s on our machine (CPU shared with other workloads), and loading the model took about 4 minutes from a Windows bind mount. With a consumer GPU (GTX 1660 Super, via LM Studio) a document takes 13–25 s. Two passes per chunk double the model calls; this is the price of stable output.
+- **Partial mentions.** "dott. Bernasconi" shares the placeholder of "Paolo Bernasconi", so after restore it reads as the full name. This keeps the person consistent for the external AI, at the cost of a non-identical round trip.
 - **Scope.** Plain text only (no PDF/DOCX). Romansh and Swiss-German dialects are not evaluated. Riserbo is an assistant, not a legal guarantee of anonymity; the user reviews the result.
 
 ## 7. Reproducibility
 
 - Hardware used for the reported numbers: Windows 11, 16 GB RAM, NVIDIA GTX 1660 Super 6 GB; Apertus served by LM Studio (llama.cpp backend), context 8192, 1 parallel slot, temperature 0.
-- `make run` from `track_2b/` downloads the model and starts both containers. `make eval` reproduces the table against the running model server (`data/eval/results.json`). `make test` runs the unit tests: checksum cases, placeholder consistency, merge rules, hallucination guard and round-trip restore.
+- `make run` from `track_2b/` downloads the model and starts both containers. `make eval` reproduces the table against the running model server (`data/eval/results.json`). `make test` runs the unit tests: checksum cases, placeholder consistency, merge rules, signature/relative/surname rules, hallucination guard and round-trip restore.
 - Test set: `python -m riserbo.eval.generate --seed 2026`; MD5 of the committed file `edd43acad366f9fb018f2fcd5d1a2414`.
 - rizzo-pii baseline: `pip install torch transformers` then `python -m riserbo.eval.run --rizzo`.
 
