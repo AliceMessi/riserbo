@@ -8,7 +8,7 @@ Reversible redaction of personal data in Swiss and Italian documents, powered by
 - **Event:** Online
 - **Team:** Riserbo — Alfredo de Candia (solo)
 - **Code:** https://github.com/AliceMessi/riserbo
-- **Demo:** `<!-- VIDEO -->`
+- **Demo video:** https://youtu.be/nVgVDUzquE8
 
 ## 1. Summary
 

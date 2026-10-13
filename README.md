@@ -11,6 +11,8 @@
 
 Apertus 1.5 8B runs in its own Docker container on an internal network with **no internet access**. Riserbo is designed for **on-premise / air-gapped** deployment (Hack Apertus target architecture a + b).
 
+**Demo video (1:49):** https://youtu.be/nVgVDUzquE8 · **Technical report:** [`track_2b/Riserbo_Report.pdf`](track_2b/Riserbo_Report.pdf)
+
 ![Riserbo redacting an Italian document](track_2b/docs/screenshot-redact.png)
 
 ## Results
