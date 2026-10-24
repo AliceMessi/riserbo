@@ -1,6 +1,12 @@
 # Riserbo
 
+[![tests](https://github.com/AliceMessi/riserbo/actions/workflows/tests.yml/badge.svg)](https://github.com/AliceMessi/riserbo/actions/workflows/tests.yml) ![licence: Apache-2.0](https://img.shields.io/badge/licence-Apache--2.0-blue)
+
 **Reversible redaction of personal data in Swiss and Italian documents, powered by Apertus and running entirely on your own machine.**
+
+**For** lawyers, fiduciaries and compliance teams in Switzerland and Italy who want to use cloud AI on client files without breaking data-protection law or professional secrecy.
+
+▶ **Try it in your browser, no install:** https://alicemessi.github.io/riserbo/. It shows the real output of Apertus on the three sample letters (precomputed), and restoring runs in the page. To redact your own documents, use the [quick start](#quick-start).
 
 *Riserbo* (Italian: discretion, confidentiality) lets a legal or compliance team use any cloud AI on client documents without the personal data ever leaving the building:
 
@@ -29,7 +35,7 @@ On a synthetic test set of 60 Swiss/Italian documents in three languages (`make 
 
 60 synthetic documents (20 IT, 20 DE, 20 FR), 594 gold items, Apertus 1.5 8B Q4_K_M, temperature 0, 0 failed model calls. s/doc measured on a GTX 1660 Super (6 GB) with the CPU shared by other workloads. Full breakdown in the [technical report](track_2b/technical_report.md#5-evaluation).
 
-## Try it
+## Quick start
 
 Requirements: Docker with Compose, ~8 GB free RAM, ~6 GB disk. No GPU needed. On CPU, the first start loads the model for a few minutes, and a one-page document takes a few minutes. With a GPU endpoint (see below) it takes seconds.
 
@@ -45,7 +51,20 @@ Already running Apertus elsewhere (LM Studio, vLLM, a sovereign Swiss cloud endp
 LLM_BASE_URL=http://host.docker.internal:1234/v1 LLM_NAME=apertus-v1.5-8b-text make run-app
 ```
 
-Reproduce the evaluation with `make eval`, and run the tests with `make test`.
+Reproduce the evaluation with `make eval`, and run the tests with `make test`. The tests mock the model and also run on every push (badge above).
+
+The browser demo in [`track_2b/site/`](track_2b/site/) is rebuilt with `python track_2b/tools/precompute_demo.py track_2b/site/demo.json` while a model server is running. The script calls the same rules, Apertus passes and merge as the app.
+
+## How it was planned and built
+
+The project was planned with the [Devpost Learn skill pack](https://github.com/challengepost/learn-ai-basics) before any code was written, then built slice by slice with an AI coding assistant:
+
+| Step | File | What it fixed |
+|---|---|---|
+| Scope | [`devpost/scope.md`](devpost/scope.md) | Who it is for, the core loop (redact → share → restore), what "working" looks like, the proof-of-concept boundary and what was cut |
+| PRD | [`devpost/prd.md`](devpost/prd.md) | The core journey, screens, behaviour of redaction, placeholders and restore, states and product decisions |
+| Spec | [`devpost/spec.md`](devpost/spec.md) | How it works in plain language, stack, where it runs, components (rules, Apertus client, pipeline, restore, web app, evaluation), data model |
+| Checklist | [`devpost/checklist.md`](devpost/checklist.md) | The build slices, hands-on checkpoints, the final review and every later change under *Revisions* |
 
 ## How it works
 
