@@ -1,0 +1,437 @@
+{
+ "model": "apertus-v1.5-8b-text",
+ "generated": "2026-10-24",
+ "samples": [
+  {
+   "id": "de_graubuenden",
+   "title": "Deutsch · Graubünden",
+   "text": "Betreff: Kündigung und Arbeitszeugnis\n\nSehr geehrte Frau Dr. Keller,\n\nunser Mitarbeiter Thomas Huber (geb. am 12.09.1985), seit 2019 der einzige Lokführer mit Wohnsitz in Bergün, ist seit Juni wegen einer Burnout-Erkrankung krankgeschrieben. Er wohnt an der Hauptstrasse 7, 7482 Bergün. Lohnkonto: CH58 0557 6169 8716 8976 8, AHV-Nr. 756.6987.9730.94, Mobile +41 79 962 71 18.\n\nWir bitten Sie, die Kündigung gemäss Art. 336c OR zu prüfen.\n\nFreundliche Grüsse\nMartin Vogt, HR-Leiter\nBergbahnen Albula AG, CHE-634.400.292 MWST\n",
+   "spans": [
+    {
+     "start": 61,
+     "end": 67,
+     "text": "Keller",
+     "type": "PERSON",
+     "source": "rule",
+     "reason": "Name after a title or form of address",
+     "placeholder": "[PERSON_1]"
+    },
+    {
+     "start": 88,
+     "end": 100,
+     "text": "Thomas Huber",
+     "type": "PERSON",
+     "source": "apertus",
+     "reason": "Full name of the employee",
+     "placeholder": "[PERSON_2]"
+    },
+    {
+     "start": 110,
+     "end": 120,
+     "text": "12.09.1985",
+     "type": "DOB",
+     "source": "rule",
+     "reason": "Date of birth",
+     "placeholder": "[DATE_1]"
+    },
+    {
+     "start": 133,
+     "end": 177,
+     "text": "der einzige Lokführer mit Wohnsitz in Bergün",
+     "type": "QUASI",
+     "source": "apertus",
+     "reason": "Unique role in a small place",
+     "placeholder": "[QUASI_1]"
+    },
+    {
+     "start": 205,
+     "end": 223,
+     "text": "Burnout-Erkrankung",
+     "type": "HEALTH",
+     "source": "apertus",
+     "reason": "Medical condition",
+     "placeholder": "[HEALTH_1]"
+    },
+    {
+     "start": 258,
+     "end": 285,
+     "text": "Hauptstrasse 7, 7482 Bergün",
+     "type": "ADDRESS",
+     "source": "rule",
+     "reason": "Postal address (street and number)",
+     "placeholder": "[ADDRESS_1]"
+    },
+    {
+     "start": 298,
+     "end": 324,
+     "text": "CH58 0557 6169 8716 8976 8",
+     "type": "IBAN",
+     "source": "rule",
+     "reason": "IBAN with valid mod-97 checksum",
+     "placeholder": "[IBAN_1]"
+    },
+    {
+     "start": 334,
+     "end": 350,
+     "text": "756.6987.9730.94",
+     "type": "AHV",
+     "source": "rule",
+     "reason": "Swiss AHV/AVS social security number (EAN-13 check digit valid)",
+     "placeholder": "[AHV_1]"
+    },
+    {
+     "start": 359,
+     "end": 375,
+     "text": "+41 79 962 71 18",
+     "type": "PHONE",
+     "source": "rule",
+     "reason": "Telephone number",
+     "placeholder": "[PHONE_1]"
+    },
+    {
+     "start": 459,
+     "end": 470,
+     "text": "Martin Vogt",
+     "type": "PERSON",
+     "source": "rule",
+     "reason": "Signatory under a closing formula",
+     "placeholder": "[PERSON_3]"
+    },
+    {
+     "start": 482,
+     "end": 502,
+     "text": "Bergbahnen Albula AG",
+     "type": "ORG",
+     "source": "apertus",
+     "reason": "Company name mentioned in the text",
+     "placeholder": "[ORG_1]"
+    },
+    {
+     "start": 504,
+     "end": 524,
+     "text": "CHE-634.400.292 MWST",
+     "type": "UID",
+     "source": "rule",
+     "reason": "Swiss enterprise identification number (mod-11 valid)",
+     "placeholder": "[UID_1]"
+    }
+   ],
+   "redacted": "Betreff: Kündigung und Arbeitszeugnis\n\nSehr geehrte Frau Dr. [PERSON_1],\n\nunser Mitarbeiter [PERSON_2] (geb. am [DATE_1]), seit 2019 [QUASI_1], ist seit Juni wegen einer [HEALTH_1] krankgeschrieben. Er wohnt an der [ADDRESS_1]. Lohnkonto: [IBAN_1], AHV-Nr. [AHV_1], Mobile [PHONE_1].\n\nWir bitten Sie, die Kündigung gemäss Art. 336c OR zu prüfen.\n\nFreundliche Grüsse\n[PERSON_3], HR-Leiter\n[ORG_1], [UID_1]\n",
+   "mapping": {
+    "[PERSON_1]": "Keller",
+    "[PERSON_2]": "Thomas Huber",
+    "[PERSON_3]": "Martin Vogt",
+    "[DATE_1]": "12.09.1985",
+    "[QUASI_1]": "der einzige Lokführer mit Wohnsitz in Bergün",
+    "[HEALTH_1]": "Burnout-Erkrankung",
+    "[ADDRESS_1]": "Hauptstrasse 7, 7482 Bergün",
+    "[IBAN_1]": "CH58 0557 6169 8716 8976 8",
+    "[AHV_1]": "756.6987.9730.94",
+    "[PHONE_1]": "+41 79 962 71 18",
+    "[ORG_1]": "Bergbahnen Albula AG",
+    "[UID_1]": "CHE-634.400.292 MWST"
+   },
+   "rules_only_missed": 4
+  },
+  {
+   "id": "fr_gruyere",
+   "title": "Français · Gruyère",
+   "text": "Objet : litige de bail — dossier 77/2026\n\nMadame, Monsieur,\n\nNotre mandante, Mme Sophie Rochat, née le 21.11.1990, seule sage-femme indépendante de la commune de Gruyères, conteste la résiliation de son bail pour l'appartement de la Rue du Bourg 3, 1663 Gruyères. Elle est enceinte de sept mois et souffre d'une hypertension gravidique.\n\nLe bailleur, la Régie du Lac SA, a été informé par courrier. Coordonnées de Mme Rochat : AVS 756.1141.7075.39, tél. +41 26 921 45 87, sophie.rochat@gruyere-mail.ch.\n\nVeuillez agréer nos salutations distinguées.\nMe Julien Favre, avocat\nÉtude Favre & Associés, Genève\n",
+   "spans": [
+    {
+     "start": 81,
+     "end": 94,
+     "text": "Sophie Rochat",
+     "type": "PERSON",
+     "source": "rule",
+     "reason": "Name after a title or form of address",
+     "placeholder": "[PERSON_1]"
+    },
+    {
+     "start": 103,
+     "end": 113,
+     "text": "21.11.1990",
+     "type": "DOB",
+     "source": "rule",
+     "reason": "Date of birth",
+     "placeholder": "[DATE_1]"
+    },
+    {
+     "start": 115,
+     "end": 170,
+     "text": "seule sage-femme indépendante de la commune de Gruyères",
+     "type": "QUASI",
+     "source": "apertus",
+     "reason": "Unique professional in a small community",
+     "placeholder": "[QUASI_1]"
+    },
+    {
+     "start": 233,
+     "end": 262,
+     "text": "Rue du Bourg 3, 1663 Gruyères",
+     "type": "ADDRESS",
+     "source": "rule",
+     "reason": "Postal address (street and number)",
+     "placeholder": "[ADDRESS_1]"
+    },
+    {
+     "start": 273,
+     "end": 335,
+     "text": "enceinte de sept mois et souffre d'une hypertension gravidique",
+     "type": "HEALTH",
+     "source": "apertus",
+     "reason": "Pregnancy and medical condition",
+     "placeholder": "[HEALTH_1]"
+    },
+    {
+     "start": 354,
+     "end": 369,
+     "text": "Régie du Lac SA",
+     "type": "ORG",
+     "source": "apertus",
+     "reason": "Landlord company named in the text",
+     "placeholder": "[ORG_1]"
+    },
+    {
+     "start": 418,
+     "end": 424,
+     "text": "Rochat",
+     "type": "PERSON",
+     "source": "rule",
+     "reason": "Name after a title or form of address",
+     "placeholder": "[PERSON_1]"
+    },
+    {
+     "start": 431,
+     "end": 447,
+     "text": "756.1141.7075.39",
+     "type": "AHV",
+     "source": "rule",
+     "reason": "Swiss AHV/AVS social security number (EAN-13 check digit valid)",
+     "placeholder": "[AHV_1]"
+    },
+    {
+     "start": 454,
+     "end": 470,
+     "text": "+41 26 921 45 87",
+     "type": "PHONE",
+     "source": "rule",
+     "reason": "Telephone number",
+     "placeholder": "[PHONE_1]"
+    },
+    {
+     "start": 472,
+     "end": 501,
+     "text": "sophie.rochat@gruyere-mail.ch",
+     "type": "EMAIL",
+     "source": "rule",
+     "reason": "E-mail address",
+     "placeholder": "[EMAIL_1]"
+    },
+    {
+     "start": 549,
+     "end": 564,
+     "text": "Me Julien Favre",
+     "type": "PERSON",
+     "source": "apertus",
+     "reason": "Name of a lawyer (signatory)",
+     "placeholder": "[PERSON_2]"
+    },
+    {
+     "start": 573,
+     "end": 595,
+     "text": "Étude Favre & Associés",
+     "type": "ORG",
+     "source": "apertus",
+     "reason": "Law firm",
+     "placeholder": "[ORG_2]"
+    }
+   ],
+   "redacted": "Objet : litige de bail — dossier 77/2026\n\nMadame, Monsieur,\n\nNotre mandante, Mme [PERSON_1], née le [DATE_1], [QUASI_1], conteste la résiliation de son bail pour l'appartement de la [ADDRESS_1]. Elle est [HEALTH_1].\n\nLe bailleur, la [ORG_1], a été informé par courrier. Coordonnées de Mme [PERSON_1] : AVS [AHV_1], tél. [PHONE_1], [EMAIL_1].\n\nVeuillez agréer nos salutations distinguées.\n[PERSON_2], avocat\n[ORG_2], Genève\n",
+   "mapping": {
+    "[PERSON_1]": "Sophie Rochat",
+    "[PERSON_2]": "Me Julien Favre",
+    "[DATE_1]": "21.11.1990",
+    "[QUASI_1]": "seule sage-femme indépendante de la commune de Gruyères",
+    "[ADDRESS_1]": "Rue du Bourg 3, 1663 Gruyères",
+    "[HEALTH_1]": "enceinte de sept mois et souffre d'une hypertension gravidique",
+    "[ORG_1]": "Régie du Lac SA",
+    "[AHV_1]": "756.1141.7075.39",
+    "[PHONE_1]": "+41 26 921 45 87",
+    "[EMAIL_1]": "sophie.rochat@gruyere-mail.ch",
+    "[ORG_2]": "Étude Favre & Associés"
+   },
+   "rules_only_missed": 3
+  },
+  {
+   "id": "it_ticino",
+   "title": "Italiano · Ticino",
+   "text": "Oggetto: richiesta di consulenza — pratica n. 2026/0412\n\nGentile avvocata Rezzonico,\n\nle scrivo per conto del mio cliente, dott. Paolo Bernasconi, nato a Lugano il 03.04.1971, unico medico di base a Bosco Gurin. Il dott. Bernasconi, che da marzo è in cura per una sclerosi multipla, intende chiedere alla Banca Alta Vallemaggia SA un prestito di CHF 80'000 per ristrutturare lo studio in Via Cantonale 21, 6685 Bosco Gurin.\n\nDati utili: AHV 756.1588.1399.86, codice fiscale italiano BRNPLA71D03Z133T, conto IBAN CH06 6455 6815 1884 4729 4, telefono +41 78 365 67 33, e-mail p.bernasconi@studiogurin.ch.\n\nLa moglie, Elena Bernasconi-Dazio, è la sindaca del comune e preferirebbe che la vicenda non venisse resa pubblica.\n\nCordiali saluti,\nLisa Pedrazzini\nFiduciaria Valmaggia Sagl, CHE-486.488.761 IVA\n",
+   "spans": [
+    {
+     "start": 74,
+     "end": 83,
+     "text": "Rezzonico",
+     "type": "PERSON",
+     "source": "rule",
+     "reason": "Name after a title or form of address",
+     "placeholder": "[PERSON_1]"
+    },
+    {
+     "start": 129,
+     "end": 145,
+     "text": "Paolo Bernasconi",
+     "type": "PERSON",
+     "source": "rule",
+     "reason": "Name after a title or form of address",
+     "placeholder": "[PERSON_2]"
+    },
+    {
+     "start": 164,
+     "end": 174,
+     "text": "03.04.1971",
+     "type": "DOB",
+     "source": "rule",
+     "reason": "Date of birth",
+     "placeholder": "[DATE_1]"
+    },
+    {
+     "start": 176,
+     "end": 210,
+     "text": "unico medico di base a Bosco Gurin",
+     "type": "QUASI",
+     "source": "apertus",
+     "reason": "Unique professional role in a small locality",
+     "placeholder": "[QUASI_1]"
+    },
+    {
+     "start": 221,
+     "end": 231,
+     "text": "Bernasconi",
+     "type": "PERSON",
+     "source": "rule",
+     "reason": "Name after a title or form of address",
+     "placeholder": "[PERSON_2]"
+    },
+    {
+     "start": 264,
+     "end": 281,
+     "text": "sclerosi multipla",
+     "type": "HEALTH",
+     "source": "apertus",
+     "reason": "Medical condition",
+     "placeholder": "[HEALTH_1]"
+    },
+    {
+     "start": 305,
+     "end": 330,
+     "text": "Banca Alta Vallemaggia SA",
+     "type": "ORG",
+     "source": "apertus",
+     "reason": "Financial institution mentioned in the text",
+     "placeholder": "[ORG_1]"
+    },
+    {
+     "start": 388,
+     "end": 422,
+     "text": "Via Cantonale 21, 6685 Bosco Gurin",
+     "type": "ADDRESS",
+     "source": "rule",
+     "reason": "Postal address (street and number)",
+     "placeholder": "[ADDRESS_1]"
+    },
+    {
+     "start": 441,
+     "end": 457,
+     "text": "756.1588.1399.86",
+     "type": "AHV",
+     "source": "rule",
+     "reason": "Swiss AHV/AVS social security number (EAN-13 check digit valid)",
+     "placeholder": "[AHV_1]"
+    },
+    {
+     "start": 483,
+     "end": 499,
+     "text": "BRNPLA71D03Z133T",
+     "type": "CF",
+     "source": "rule",
+     "reason": "Italian codice fiscale (check character valid)",
+     "placeholder": "[CF_1]"
+    },
+    {
+     "start": 512,
+     "end": 538,
+     "text": "CH06 6455 6815 1884 4729 4",
+     "type": "IBAN",
+     "source": "rule",
+     "reason": "IBAN with valid mod-97 checksum",
+     "placeholder": "[IBAN_1]"
+    },
+    {
+     "start": 549,
+     "end": 565,
+     "text": "+41 78 365 67 33",
+     "type": "PHONE",
+     "source": "rule",
+     "reason": "Telephone number",
+     "placeholder": "[PHONE_1]"
+    },
+    {
+     "start": 574,
+     "end": 601,
+     "text": "p.bernasconi@studiogurin.ch",
+     "type": "EMAIL",
+     "source": "rule",
+     "reason": "E-mail address",
+     "placeholder": "[EMAIL_1]"
+    },
+    {
+     "start": 615,
+     "end": 637,
+     "text": "Elena Bernasconi-Dazio",
+     "type": "PERSON",
+     "source": "rule",
+     "reason": "Relative named after the relation",
+     "placeholder": "[PERSON_3]"
+    },
+    {
+     "start": 738,
+     "end": 753,
+     "text": "Lisa Pedrazzini",
+     "type": "PERSON",
+     "source": "rule",
+     "reason": "Signatory under a closing formula",
+     "placeholder": "[PERSON_4]"
+    },
+    {
+     "start": 781,
+     "end": 800,
+     "text": "CHE-486.488.761 IVA",
+     "type": "UID",
+     "source": "rule",
+     "reason": "Swiss enterprise identification number (mod-11 valid)",
+     "placeholder": "[UID_1]"
+    }
+   ],
+   "redacted": "Oggetto: richiesta di consulenza — pratica n. 2026/0412\n\nGentile avvocata [PERSON_1],\n\nle scrivo per conto del mio cliente, dott. [PERSON_2], nato a Lugano il [DATE_1], [QUASI_1]. Il dott. [PERSON_2], che da marzo è in cura per una [HEALTH_1], intende chiedere alla [ORG_1] un prestito di CHF 80'000 per ristrutturare lo studio in [ADDRESS_1].\n\nDati utili: AHV [AHV_1], codice fiscale italiano [CF_1], conto IBAN [IBAN_1], telefono [PHONE_1], e-mail [EMAIL_1].\n\nLa moglie, [PERSON_3], è la sindaca del comune e preferirebbe che la vicenda non venisse resa pubblica.\n\nCordiali saluti,\n[PERSON_4]\nFiduciaria Valmaggia Sagl, [UID_1]\n",
+   "mapping": {
+    "[PERSON_1]": "Rezzonico",
+    "[PERSON_2]": "Paolo Bernasconi",
+    "[PERSON_3]": "Elena Bernasconi-Dazio",
+    "[PERSON_4]": "Lisa Pedrazzini",
+    "[DATE_1]": "03.04.1971",
+    "[QUASI_1]": "unico medico di base a Bosco Gurin",
+    "[HEALTH_1]": "sclerosi multipla",
+    "[ORG_1]": "Banca Alta Vallemaggia SA",
+    "[ADDRESS_1]": "Via Cantonale 21, 6685 Bosco Gurin",
+    "[AHV_1]": "756.1588.1399.86",
+    "[CF_1]": "BRNPLA71D03Z133T",
+    "[IBAN_1]": "CH06 6455 6815 1884 4729 4",
+    "[PHONE_1]": "+41 78 365 67 33",
+    "[EMAIL_1]": "p.bernasconi@studiogurin.ch",
+    "[UID_1]": "CHE-486.488.761 IVA"
+   },
+   "rules_only_missed": 3
+  }
+ ]
+}
